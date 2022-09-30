@@ -1,0 +1,3 @@
+*.txt
+!vocab.txt
+scrapy_baidu-master/
