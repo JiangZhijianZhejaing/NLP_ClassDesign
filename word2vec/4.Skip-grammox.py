@@ -101,4 +101,4 @@ for epoch in range(num_epoch):
     total_losses.append(total_loss)
 
 # 保存词向量（model.embeddings）
-save_pretrained(vocab, model.embeddings.weight.data, "skipgram_{:.4f}.vec".format(total_losses[-1]),total_losses)
+save_pretrained(vocab, model.embeddings.weight.data, "skipgram.vec",total_losses)

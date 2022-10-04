@@ -1,5 +1,7 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
+from tqdm import tqdm
+
 from vocab import Vocab
 
 # Constants
@@ -52,11 +54,10 @@ def load_crawldata():
     print("1.加载并清理数据")
     with open("../data/crawldataForWord2vec.txt", encoding='utf-8') as f:
         data = f.readlines()
-        data = data[:int(len(data) * 0.05)]
-    print("2.构建词表")
+        data = data[:int(len(data) * 0.2)]
     vocab = Vocab()
     corpus=[]
-    for str_ in data:
+    for str_ in tqdm(data,desc="2.构建词表"):
         if str_ == "\n": continue
         str_ = re.sub(r'\d +', '', str_)
         table = str.maketrans(

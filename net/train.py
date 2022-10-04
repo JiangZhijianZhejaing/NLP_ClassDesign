@@ -17,10 +17,11 @@ from torch.utils.data import Dataset, DataLoader
 from os.path import join, exists
 from torch.nn import CrossEntropyLoss
 from tqdm import tqdm
-from torch.nn import DataParallel
 import transformers
 import pickle
 import sys
+
+
 from pytorchtools import EarlyStopping
 from sklearn.model_selection import train_test_split
 from transformers import GPT2TokenizerFast, GPT2LMHeadModel, GPT2Config
@@ -28,33 +29,49 @@ from transformers import BertTokenizerFast
 import pandas as pd
 import torch.nn.utils.rnn as rnn_utils
 import numpy as np
-from dataset import MyDataset
+from dataset import DialogueDataset
+from torch.utils.tensorboard import SummaryWriter
+from cnn import CNN
+from lstm import LSTM
+from mlp import MLP
+from transformer import Transformer
 
 
 def set_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', default='0', type=str, required=False, help='设置使用哪些显卡')
     parser.add_argument('--cuda', default='True',action='store_true', help='不使用GPU进行训练')
-    parser.add_argument('--vocab_path', default='vocab/vocab.txt', type=str, required=False,
+    parser.add_argument('--vocab_path', default='../data/vocab.txt', type=str, required=False,
                         help='词表路径')
-    parser.add_argument('--model_config', default='config/config.json', type=str, required=False,
+    parser.add_argument('--model_config', default='../config/config.json', type=str, required=False,
                         help='设置模型参数')
-    parser.add_argument('--train_path', default='data/train.pkl', type=str, required=False, help='训练集路径')
+    parser.add_argument('--train_path', default='../data/train.pkl', type=str, required=False, help='训练集路径')
     parser.add_argument('--max_len', default=150, type=int, required=False, help='训练时，输入数据的最大长度')
 
-    parser.add_argument('--log_path', default='data/train.log', type=str, required=False, help='训练日志存放位置')
+    parser.add_argument('--log_path', default='../log/', type=str, required=False, help='训练日志存放位置')
     parser.add_argument('--log', default=True, help="是否记录日志")
     parser.add_argument('--ignore_index', default=-100, type=int, required=False, help='对于ignore_index的label token不计算梯度')
     # parser.add_argument('--input_len', default=200, type=int, required=False, help='输入的长度')
-    parser.add_argument('--epochs', default=100, type=int, required=False, help='训练的最大轮次')
-    parser.add_argument('--batch_size', default=4, type=int, required=False, help='训练的batch size')
-    parser.add_argument('--lr', default=2.6e-5, type=float, required=False, help='学习率')
+    parser.add_argument('--epochs', default=20, type=int, required=False, help='训练的最大轮次')
+    parser.add_argument('--batch_size', default=32, type=int, required=False, help='训练的batch size')
+    parser.add_argument('--lr', default=2e-4, type=float, required=False, help='学习率')
     parser.add_argument('--eps', default=1.0e-09, type=float, required=False, help='衰减率')
-    parser.add_argument('--log_step', default=1, type=int, required=False, help='多少步汇报一次loss')
+    parser.add_argument('--log_step', default=1000, type=int, required=False, help='多少步汇报一次loss')
     parser.add_argument('--gradient_accumulation_steps', default=4, type=int, required=False, help='梯度积累')
     parser.add_argument('--max_grad_norm', default=2.0, type=float, required=False)
-    parser.add_argument('--save_model_path', default='model', type=str, required=False,
+    parser.add_argument('--model_type', default='transformer', type=str, required=False,
+                        help='模型类型')
+    parser.add_argument('--vocab_size', default=8318, type=int, required=False,
+                        help='词典大小')
+    parser.add_argument('--hidden_dim', default=128, type=int, required=False,
+                        help='隐层大小')
+    parser.add_argument('--embedding_dim', default=128 , type=int, required=False,
+                        help='词嵌入大小')
+    parser.add_argument('--save_model_path', default='../model', type=str, required=False,
                         help='模型输出路径')
+    parser.add_argument('--vec_path', default='../word2vec/', type=str, required=False,
+                        help='模型输出路径')
+
     parser.add_argument('--pretrained_model', default='', type=str, required=False,
                         help='预训练的模型的路径')
     # parser.add_argument('--seed', type=int, default=None, help='设置种子用于生成随机数，以使得训练的结果是确定的')
@@ -79,7 +96,7 @@ def create_logger(args):
 
     # 创建一个handler，用于写入日志文件
     file_handler = logging.FileHandler(
-        filename=args.log_path)
+        filename=args.log_path+args.model_type+"_"+args.vec_type+".log")
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.INFO)
     logger.addHandler(file_handler)
@@ -91,7 +108,20 @@ def create_logger(args):
     logger.addHandler(console)
 
     return logger
-
+#读入词向量
+def load_pretrained(load_path):
+    with open(load_path,"r",encoding='utf-8') as fin:
+        #第一行为词向量的大小
+        n,d=map(int,fin.readline().split())
+        tokens=[]
+        embeds=[]
+        for line in fin:
+            line=line.rstrip().split(' ')
+            token,embed=line[0],list(map(float,line[1:]))
+            tokens.append(token)
+            embeds.append(embed)
+        embeds=torch.tensor(embeds,dtype=torch.float)
+    return embeds
 
 def collate_fn(batch):
     # 对每个batch进行padding
@@ -100,11 +130,10 @@ def collate_fn(batch):
     return input_ids, labels
 
 
-def load_dataset(logger, args):
+def load_dataset(args):
     """
     加载训练集和验证集
     """
-    logger.info("loading training dataset and validating dataset")
     train_path = args.train_path
 
     with open(train_path, "rb") as f:
@@ -118,8 +147,8 @@ def load_dataset(logger, args):
     # input_list_train = input_list_train[:24]
     # input_list_val = input_list_val[:24]
 
-    train_dataset = MyDataset(input_list_train, args.max_len)
-    val_dataset = MyDataset(input_list_val, args.max_len)
+    train_dataset = DialogueDataset(input_list_train, args.max_len)
+    val_dataset =DialogueDataset(input_list_val, args.max_len)
 
     return train_dataset, val_dataset
 
@@ -138,14 +167,18 @@ def train_epoch(model, train_dataloader, optimizer, scheduler, logger,
     # epoch_total_num: 每个epoch中,output预测的word的总数量
     epoch_correct_num, epoch_total_num = 0, 0
 
-    for batch_idx, (input_ids, labels) in enumerate(train_dataloader):
+    for batch_idx, (input_ids, labels) in enumerate(tqdm(train_dataloader)):
         # 捕获cuda out of memory exception
         try:
             input_ids = input_ids.to(device)
             labels = labels.to(device)
             outputs = model.forward(input_ids, labels=labels)
-            logits = outputs.logits
-            loss = outputs.loss
+            if args.model_type in ['mlp','cnn','lstm','transformer']:
+                logits = outputs['logits']
+                loss = outputs['loss']
+            else:
+                logits = outputs.logits
+                loss = outputs.loss
             loss = loss.mean()
 
             # 统计该batch的预测token的正确数与总数
@@ -173,10 +206,10 @@ def train_epoch(model, train_dataloader, optimizer, scheduler, logger,
                 # 清空梯度信息
                 optimizer.zero_grad()
 
-            if (batch_idx + 1) % args.log_step == 0:
-                logger.info(
-                    "batch {} of epoch {}, loss {}, batch_acc {}, lr {}".format(
-                        batch_idx + 1, epoch + 1, loss.item() * args.gradient_accumulation_steps, batch_acc, scheduler.get_lr()))
+            # if (batch_idx + 1) % args.log_step == 0:
+            #     logger.info(
+            #         "batch {} of epoch {}, loss {}, batch_acc {}, lr {}".format(
+            #             batch_idx + 1, epoch + 1, loss.item() * args.gradient_accumulation_steps, batch_acc, scheduler.get_lr()))
 
             del input_ids, outputs
 
@@ -197,11 +230,20 @@ def train_epoch(model, train_dataloader, optimizer, scheduler, logger,
 
     # save model
     logger.info('saving model for epoch {}'.format(epoch + 1))
-    model_path = join(args.save_model_path, 'epoch{}'.format(epoch + 1))
-    if not os.path.exists(model_path):
-        os.mkdir(model_path)
-    model_to_save = model.module if hasattr(model, 'module') else model
-    model_to_save.save_pretrained(model_path)
+    if args.model_type in ['mlp', 'cnn', 'lstm', 'transformer']:
+        dirs=args.save_model_path + "/" + args.model_type + 'epoch{}/'.format(epoch + 1)
+        if not os.path.exists(dirs):
+            os.mkdir(dirs)
+        model_path = join(args.save_model_path + "/" + args.model_type + 'epoch{}/'.format(epoch + 1),
+                          args.model_type + "_" + args.vec_type + '_epoch{}.pth'.format(epoch + 1))
+        torch.save(model.state_dict(), model_path)
+    else:
+        model_path = join(args.save_model_path, args.model_type+"_"+args.vec_type+'epoch{}'.format(epoch + 1))
+        if not os.path.exists(model_path):
+            os.mkdir(model_path)
+        model_to_save = model.module if hasattr(model, 'module') else model
+        model_to_save.save_pretrained(model_path)
+
     logger.info('epoch {} finished'.format(epoch + 1))
     epoch_finish_time = datetime.now()
     logger.info('time for one epoch: {}'.format(epoch_finish_time - epoch_start_time))
@@ -225,8 +267,10 @@ def validate_epoch(model, validate_dataloader, logger, epoch, args):
                 input_ids = input_ids.to(device)
                 labels = labels.to(device)
                 outputs = model.forward(input_ids, labels=labels)
-                logits = outputs.logits
-                loss = outputs.loss
+                if args.model_type in ['mlp', 'cnn', 'lstm', 'transformer']:
+                    loss = outputs['loss']
+                else:
+                    loss = outputs.loss
                 loss = loss.mean()
 
                 total_loss += loss.item()
@@ -265,7 +309,7 @@ def train(model, logger, train_dataset, validate_dataset, args):
     )
 
     logger.info('starting training')
-
+    writer = SummaryWriter(log_dir=args.log_path, filename_suffix=args.model_type+"_"+args.vec_type)
     # 用于记录每个epoch训练和验证的loss
     train_losses, validate_losses = [], []
     # 记录验证集的最小loss
@@ -284,16 +328,18 @@ def train(model, logger, train_dataset, validate_dataset, args):
             model=model, validate_dataloader=validate_dataloader,
             logger=logger, epoch=epoch, args=args)
         validate_losses.append(validate_loss)
+        writer.add_scalar("train_loss_"+args.model_type+"_"+args.vec_type, train_loss, (epoch + 1))
+        writer.add_scalar("validate_loss_"+args.model_type+"_"+args.vec_type, validate_loss, (epoch + 1))
 
-        # 保存当前困惑度最低的模型，困惑度低，模型的生成效果不一定会越好
-        if validate_loss < best_val_loss:
-            best_val_loss = validate_loss
-            logger.info('saving current best model for epoch {}'.format(epoch + 1))
-            model_path = join(args.save_model_path, 'min_ppl_model'.format(epoch + 1))
-            if not os.path.exists(model_path):
-                os.mkdir(model_path)
-            model_to_save = model.module if hasattr(model, 'module') else model
-            model_to_save.save_pretrained(model_path)
+        # # 保存当前困惑度最低的模型，困惑度低，模型的生成效果不一定会越好
+        # if validate_loss < best_val_loss:
+        #     best_val_loss = validate_loss
+        #     logger.info('saving current best model for epoch {}'.format(epoch + 1))
+        #     model_path = join(args.save_model_path+"/"+args.model_type+"_"+args.vec_type, '_min_ppl_model'.format(epoch + 1))
+        #     if not os.path.exists(model_path):
+        #         os.mkdir(model_path)
+        #     model_to_save = model.module if hasattr(model, 'module') else model
+        #     model_to_save.save_pretrained(model_path)
 
         #  如果patience=0,则不进行early stopping
         if args.patience == 0:
@@ -345,60 +391,72 @@ def calculate_acc(logit, labels, ignore_index=-100):
 def main():
     # 初始化参数
     args = set_args()
-
     # 设置使用哪些显卡进行训练
     os.environ["CUDA_VISIBLE_DEVICES"] = args.device
-
-
-
     if args.batch_size < 2048 and args.warmup_steps <= 4000:
         print('[Warning] The warmup steps may be not enough.\n' \
               '(sz_b, warmup) = (2048, 4000) is the official setting.\n' \
               'Using smaller batch w/o longer warmup may cause ' \
               'the warmup stage ends with only little data trained.')
 
-    # 创建日志对象
-    logger = create_logger(args)
-    # 当用户使用GPU,并且GPU可用时
-    device = 'cuda:0' if args.cuda else 'cpu'
-    args.device = device
-    logger.info('using device:{}'.format(device))
 
-    # 初始化tokenizer
+
+
+    # 1.初始化tokenizer
     tokenizer = BertTokenizerFast(vocab_file=args.vocab_path, sep_token="[SEP]", pad_token="[PAD]", cls_token="[CLS]")
     args.sep_id = tokenizer.sep_token_id
     args.pad_id = tokenizer.pad_token_id
     args.cls_id = tokenizer.cls_token_id
-
+    # 2.加载数据集
+    train_dataset, validate_dataset = load_dataset(args)
     # 创建模型的输出目录
     if not os.path.exists(args.save_model_path):
         os.mkdir(args.save_model_path)
 
-    # 创建模型
-    if args.pretrained_model:  # 加载预训练模型
-        model = GPT2LMHeadModel.from_pretrained(args.pretrained_model)
-    else:  # 初始化模型
-        model_config = GPT2Config.from_json_file(args.model_config)
-        model = GPT2LMHeadModel(config=model_config)
-    model = model.to(device)
-    logger.info('model config:\n{}'.format(model.config.to_json_string()))
-    assert model.config.vocab_size == tokenizer.vocab_size
-
-    # 计算模型参数数量
-    num_parameters = 0
-    parameters = model.parameters()
-    for parameter in parameters:
-        num_parameters += parameter.numel()
-    logger.info('number of model parameters: {}'.format(num_parameters))
-
-    # 记录参数设置
-    logger.info("args:{}".format(args))
-
     # 加载训练集和验证集
     # ========= Loading Dataset ========= #
-    train_dataset, validate_dataset = load_dataset(logger, args)
+    for type in ['random','ffn','rnnlm','cbow','skipgram','glove']:
+        args.vec_type=type
 
-    train(model, logger, train_dataset, validate_dataset, args)
+        # 创建日志对象
+        logger = create_logger(args)
+        # 当用户使用GPU,并且GPU可用时
+        device = 'cuda:0' if args.cuda else 'cpu'
+        args.device = device
+        logger.info('using device:{}'.format(device))
+        # 记录参数设置
+        logger.info("args:{}".format(args))
+        pt_embeds =None
+
+        # 3.创建模型
+        if args.model_type == 'mlp':
+            model = MLP(args.vocab_size, args.embedding_dim, args.hidden_dim)
+        elif args.model_type == 'cnn':
+            model = CNN(args.vocab_size, args.embedding_dim)
+        elif args.model_type == 'lstm':
+            model = LSTM(args.vocab_size, args.embedding_dim, args.hidden_dim)
+        elif args.model_type == 'transformer':
+            model = Transformer(args.vocab_size, args.embedding_dim)
+        else:
+            # 使用GPT模型
+            model_config = GPT2Config.from_json_file(args.model_config)
+            model = GPT2LMHeadModel(config=model_config)
+        if not type=='random' and args.model_type in ['mlp','cnn','lstm','transformer']:
+            model.embedding.data = load_pretrained(args.vec_path+type+".vec")
+        elif not type=='random' and args.model_type=='gpt2':
+            model.transformer.wte.data= load_pretrained(args.vec_path+type+".vec")
+
+        model = model.to(device)
+
+        # 4.计算模型参数数量,并且训练模型
+        num_parameters = 0
+        parameters = model.parameters()
+        for parameter in parameters:
+            num_parameters += parameter.numel()
+        logger.info("Train:{}-{}".format(args.model_type, type))
+        logger.info('number of model parameters: {}'.format(num_parameters))
+
+        train(model, logger, train_dataset, validate_dataset, args)
 
 
 if __name__ == '__main__':

@@ -127,5 +127,5 @@ for epoch in range(num_epoch):
 
 # 合并词嵌入矩阵与上下文嵌入矩阵，作为最终的预训练词向量
 combined_embeds = model.w_embeddings.weight + model.c_embeddings.weight
-save_pretrained(vocab, combined_embeds.data, "glove_{:.4f}.vec".format(total_losses[-1]),total_losses)
+save_pretrained(vocab, combined_embeds.data, "glove.vec",total_losses)
 

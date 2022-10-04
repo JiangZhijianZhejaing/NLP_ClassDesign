@@ -1,0 +1,202 @@
+2022-10-02 17:10:33,175 - INFO - using device:cuda:0
+2022-10-02 17:10:33,176 - INFO - args:Namespace(batch_size=128, cls_id=6, cuda='True', device='cuda:0', embedding_dim=128, epochs=20, eps=1e-09, gradient_accumulation_steps=4, hidden_dim=128, ignore_index=-100, log=True, log_path='../log/', log_step=1000, lr=0.002, max_grad_norm=2.0, max_len=150, model_config='../config/config.json', model_type='lstm', num_workers=0, pad_id=0, patience=0, pretrained_model='', save_model_path='../model', sep_id=7, train_path='../data/train.pkl', val_num=8000, vec_path='../word2vec/', vec_type='rnnlm', vocab_path='../data/vocab.txt', vocab_size=8318, warmup_steps=4000)
+2022-10-02 17:10:33,597 - INFO - Train:lstm-rnnlm
+2022-10-02 17:10:33,597 - INFO - number of model parameters: 2401918
+2022-10-02 17:10:33,616 - INFO - starting training
+2022-10-02 17:15:46,082 - INFO - epoch 1: loss 6.452935256903413, predict_acc 0.07142114134356295
+2022-10-02 17:15:46,082 - INFO - saving model for epoch 1
+2022-10-02 17:15:46,095 - INFO - epoch 1 finished
+2022-10-02 17:15:46,096 - INFO - time for one epoch: 0:05:12.308097
+2022-10-02 17:15:46,096 - INFO - start validating
+2022-10-02 17:15:48,063 - INFO - validate epoch 1: loss 5.842085638353901
+2022-10-02 17:15:48,063 - INFO - time for validating one epoch: 0:00:01.966784
+2022-10-02 17:20:59,910 - INFO - epoch 2: loss 5.84880469808844, predict_acc 0.09046874989989413
+2022-10-02 17:20:59,910 - INFO - saving model for epoch 2
+2022-10-02 17:20:59,923 - INFO - epoch 2 finished
+2022-10-02 17:20:59,923 - INFO - time for one epoch: 0:05:11.858829
+2022-10-02 17:20:59,923 - INFO - start validating
+2022-10-02 17:21:01,883 - INFO - validate epoch 2: loss 5.83592285648469
+2022-10-02 17:21:01,883 - INFO - time for validating one epoch: 0:00:01.959068
+2022-10-02 17:26:26,650 - INFO - epoch 3: loss 5.504782692578941, predict_acc 0.11926359354565053
+2022-10-02 17:26:26,651 - INFO - saving model for epoch 3
+2022-10-02 17:26:26,664 - INFO - epoch 3 finished
+2022-10-02 17:26:26,664 - INFO - time for one epoch: 0:05:24.780625
+2022-10-02 17:26:26,664 - INFO - start validating
+2022-10-02 17:26:28,952 - INFO - validate epoch 3: loss 5.140258258388888
+2022-10-02 17:26:28,952 - INFO - time for validating one epoch: 0:00:02.288213
+2022-10-02 17:32:33,009 - INFO - epoch 4: loss 4.866746432701189, predict_acc 0.1968671609521345
+2022-10-02 17:32:33,009 - INFO - saving model for epoch 4
+2022-10-02 17:32:33,022 - INFO - epoch 4 finished
+2022-10-02 17:32:33,022 - INFO - time for one epoch: 0:06:04.069379
+2022-10-02 17:32:33,022 - INFO - start validating
+2022-10-02 17:32:35,227 - INFO - validate epoch 4: loss 4.612686257208547
+2022-10-02 17:32:35,227 - INFO - time for validating one epoch: 0:00:02.204285
+2022-10-02 17:38:55,271 - INFO - epoch 5: loss 4.4748978772387975, predict_acc 0.24024134225061328
+2022-10-02 17:38:55,271 - INFO - saving model for epoch 5
+2022-10-02 17:38:55,286 - INFO - epoch 5 finished
+2022-10-02 17:38:55,286 - INFO - time for one epoch: 0:06:20.058570
+2022-10-02 17:38:55,286 - INFO - start validating
+2022-10-02 17:38:57,468 - INFO - validate epoch 5: loss 4.34886460919534
+2022-10-02 17:38:57,468 - INFO - time for validating one epoch: 0:00:02.181826
+2022-10-02 17:44:16,138 - INFO - epoch 6: loss 4.293014819690904, predict_acc 0.2572005011750265
+2022-10-02 17:44:16,138 - INFO - saving model for epoch 6
+2022-10-02 17:44:16,150 - INFO - epoch 6 finished
+2022-10-02 17:44:16,150 - INFO - time for one epoch: 0:05:18.681735
+2022-10-02 17:44:16,151 - INFO - start validating
+2022-10-02 17:44:18,148 - INFO - validate epoch 6: loss 4.231362396670926
+2022-10-02 17:44:18,149 - INFO - time for validating one epoch: 0:00:01.997306
+2022-10-02 17:49:29,889 - INFO - epoch 7: loss 4.198841280531455, predict_acc 0.26547154367591935
+2022-10-02 17:49:29,889 - INFO - saving model for epoch 7
+2022-10-02 17:49:29,902 - INFO - epoch 7 finished
+2022-10-02 17:49:29,902 - INFO - time for one epoch: 0:05:11.753539
+2022-10-02 17:49:29,902 - INFO - start validating
+2022-10-02 17:49:31,837 - INFO - validate epoch 7: loss 4.161822642049482
+2022-10-02 17:49:31,837 - INFO - time for validating one epoch: 0:00:01.934832
+2022-10-02 17:54:43,058 - INFO - epoch 8: loss 4.139222974489358, predict_acc 0.27090382060318347
+2022-10-02 17:54:43,058 - INFO - saving model for epoch 8
+2022-10-02 17:54:43,072 - INFO - epoch 8 finished
+2022-10-02 17:54:43,072 - INFO - time for one epoch: 0:05:11.234817
+2022-10-02 17:54:43,072 - INFO - start validating
+2022-10-02 17:54:45,031 - INFO - validate epoch 8: loss 4.115418095742503
+2022-10-02 17:54:45,032 - INFO - time for validating one epoch: 0:00:01.960296
+2022-10-02 17:59:58,588 - INFO - epoch 9: loss 4.096574731770202, predict_acc 0.27484938780359264
+2022-10-02 17:59:58,588 - INFO - saving model for epoch 9
+2022-10-02 17:59:58,603 - INFO - epoch 9 finished
+2022-10-02 17:59:58,603 - INFO - time for one epoch: 0:05:13.570467
+2022-10-02 17:59:58,603 - INFO - start validating
+2022-10-02 18:00:00,570 - INFO - validate epoch 9: loss 4.080973659792254
+2022-10-02 18:00:00,571 - INFO - time for validating one epoch: 0:00:01.968442
+2022-10-02 18:05:52,492 - INFO - epoch 10: loss 4.064923918560523, predict_acc 0.2778335127571525
+2022-10-02 18:05:52,492 - INFO - saving model for epoch 10
+2022-10-02 18:05:52,505 - INFO - epoch 10 finished
+2022-10-02 18:05:52,505 - INFO - time for one epoch: 0:05:51.933327
+2022-10-02 18:05:52,505 - INFO - start validating
+2022-10-02 18:05:54,726 - INFO - validate epoch 10: loss 4.05679528943954
+2022-10-02 18:05:54,727 - INFO - time for validating one epoch: 0:00:02.221953
+2022-10-02 18:11:49,372 - INFO - epoch 11: loss 4.040317541294162, predict_acc 0.280210367275079
+2022-10-02 18:11:49,372 - INFO - saving model for epoch 11
+2022-10-02 18:11:49,385 - INFO - epoch 11 finished
+2022-10-02 18:11:49,385 - INFO - time for one epoch: 0:05:54.658840
+2022-10-02 18:11:49,385 - INFO - start validating
+2022-10-02 18:11:51,560 - INFO - validate epoch 11: loss 4.037642705825068
+2022-10-02 18:11:51,560 - INFO - time for validating one epoch: 0:00:02.174258
+2022-10-02 18:17:08,668 - INFO - epoch 12: loss 4.020454346559769, predict_acc 0.28208560622123074
+2022-10-02 18:17:08,668 - INFO - saving model for epoch 12
+2022-10-02 18:17:08,681 - INFO - epoch 12 finished
+2022-10-02 18:17:08,681 - INFO - time for one epoch: 0:05:17.120042
+2022-10-02 18:17:08,682 - INFO - start validating
+2022-10-02 18:17:10,643 - INFO - validate epoch 12: loss 4.020590413001276
+2022-10-02 18:17:10,643 - INFO - time for validating one epoch: 0:00:01.961401
+2022-10-02 18:22:21,634 - INFO - epoch 13: loss 4.004453166586454, predict_acc 0.2836573903754759
+2022-10-02 18:22:21,634 - INFO - saving model for epoch 13
+2022-10-02 18:22:21,648 - INFO - epoch 13 finished
+2022-10-02 18:22:21,648 - INFO - time for one epoch: 0:05:11.003876
+2022-10-02 18:22:21,648 - INFO - start validating
+2022-10-02 18:22:23,600 - INFO - validate epoch 13: loss 4.010497081664301
+2022-10-02 18:22:23,601 - INFO - time for validating one epoch: 0:00:01.953019
+2022-10-02 18:27:34,840 - INFO - epoch 14: loss 3.991115715117185, predict_acc 0.2849298069812684
+2022-10-02 18:27:34,840 - INFO - saving model for epoch 14
+2022-10-02 18:27:34,852 - INFO - epoch 14 finished
+2022-10-02 18:27:34,852 - INFO - time for one epoch: 0:05:11.251349
+2022-10-02 18:27:34,852 - INFO - start validating
+2022-10-02 18:27:36,804 - INFO - validate epoch 14: loss 3.9991203815706315
+2022-10-02 18:27:36,805 - INFO - time for validating one epoch: 0:00:01.950431
+2022-10-02 18:32:45,742 - INFO - epoch 15: loss 3.980092799945824, predict_acc 0.2859898034257879
+2022-10-02 18:32:45,742 - INFO - saving model for epoch 15
+2022-10-02 18:32:45,756 - INFO - epoch 15 finished
+2022-10-02 18:32:45,756 - INFO - time for one epoch: 0:05:08.951208
+2022-10-02 18:32:45,756 - INFO - start validating
+2022-10-02 18:32:47,715 - INFO - validate epoch 15: loss 3.991109698049484
+2022-10-02 18:32:47,715 - INFO - time for validating one epoch: 0:00:01.959470
+2022-10-02 18:40:42,773 - INFO - epoch 16: loss 3.970891044377474, predict_acc 0.28691268149690957
+2022-10-02 18:40:42,773 - INFO - saving model for epoch 16
+2022-10-02 18:40:42,788 - INFO - epoch 16 finished
+2022-10-02 18:40:42,788 - INFO - time for one epoch: 0:07:55.072487
+2022-10-02 18:40:42,788 - INFO - start validating
+2022-10-02 18:40:45,227 - INFO - validate epoch 16: loss 3.983988235073705
+2022-10-02 18:40:45,227 - INFO - time for validating one epoch: 0:00:02.438629
+2022-10-02 18:48:52,233 - INFO - epoch 17: loss 3.963239038421746, predict_acc 0.28769847099117174
+2022-10-02 18:48:52,233 - INFO - saving model for epoch 17
+2022-10-02 18:48:52,246 - INFO - epoch 17 finished
+2022-10-02 18:48:52,246 - INFO - time for one epoch: 0:08:07.018760
+2022-10-02 18:48:52,246 - INFO - start validating
+2022-10-02 18:48:54,269 - INFO - validate epoch 17: loss 3.97857153800226
+2022-10-02 18:48:54,269 - INFO - time for validating one epoch: 0:00:02.022477
+2022-10-02 18:54:44,195 - INFO - epoch 18: loss 3.9571356880705153, predict_acc 0.2883059832811606
+2022-10-02 18:54:44,195 - INFO - saving model for epoch 18
+2022-10-02 18:54:44,211 - INFO - epoch 18 finished
+2022-10-02 18:54:44,211 - INFO - time for one epoch: 0:05:49.942467
+2022-10-02 18:54:44,211 - INFO - start validating
+2022-10-02 18:54:49,356 - INFO - validate epoch 18: loss 3.9737913493187196
+2022-10-02 18:54:49,356 - INFO - time for validating one epoch: 0:00:05.143538
+2022-10-02 19:00:57,924 - INFO - epoch 19: loss 3.9522847591388235, predict_acc 0.2888292614774314
+2022-10-02 19:00:57,924 - INFO - saving model for epoch 19
+2022-10-02 19:00:57,939 - INFO - epoch 19 finished
+2022-10-02 19:00:57,939 - INFO - time for one epoch: 0:06:08.581749
+2022-10-02 19:00:57,940 - INFO - start validating
+2022-10-02 19:00:59,961 - INFO - validate epoch 19: loss 3.9702953254022906
+2022-10-02 19:00:59,961 - INFO - time for validating one epoch: 0:00:02.021534
+2022-10-02 19:06:37,249 - INFO - epoch 20: loss 3.9486693357571383, predict_acc 0.2892055802711533
+2022-10-02 19:06:37,249 - INFO - saving model for epoch 20
+2022-10-02 19:06:37,263 - INFO - epoch 20 finished
+2022-10-02 19:06:37,263 - INFO - time for one epoch: 0:05:37.301250
+2022-10-02 19:06:37,263 - INFO - start validating
+2022-10-02 19:06:39,280 - INFO - validate epoch 20: loss 3.970076726328942
+2022-10-02 19:06:39,280 - INFO - time for validating one epoch: 0:00:02.016562
+2022-10-02 19:06:39,281 - INFO - training finished
+2022-10-02 19:06:39,282 - INFO - train_losses:[6.452935256903413, 5.84880469808844, 5.504782692578941, 4.866746432701189, 4.4748978772387975, 4.293014819690904, 4.198841280531455, 4.139222974489358, 4.096574731770202, 4.064923918560523, 4.040317541294162, 4.020454346559769, 4.004453166586454, 3.991115715117185, 3.980092799945824, 3.970891044377474, 3.963239038421746, 3.9571356880705153, 3.9522847591388235, 3.9486693357571383]
+2022-10-02 19:06:39,282 - INFO - validate_losses:[5.842085638353901, 5.83592285648469, 5.140258258388888, 4.612686257208547, 4.34886460919534, 4.231362396670926, 4.161822642049482, 4.115418095742503, 4.080973659792254, 4.05679528943954, 4.037642705825068, 4.020590413001276, 4.010497081664301, 3.9991203815706315, 3.991109698049484, 3.983988235073705, 3.97857153800226, 3.9737913493187196, 3.9702953254022906, 3.970076726328942]
+2022-10-02 19:06:39,292 - INFO - using device:cuda:0
+2022-10-02 19:06:39,292 - INFO - args:Namespace(batch_size=128, cls_id=6, cuda='True', device='cuda:0', embedding_dim=128, epochs=20, eps=1e-09, gradient_accumulation_steps=4, hidden_dim=128, ignore_index=-100, log=True, log_path='../log/', log_step=1000, lr=0.002, max_grad_norm=2.0, max_len=150, model_config='../config/config.json', model_type='lstm', num_workers=0, pad_id=0, patience=0, pretrained_model='', save_model_path='../model', sep_id=7, train_path='../data/train.pkl', val_num=8000, vec_path='../word2vec/', vec_type='cbow', vocab_path='../data/vocab.txt', vocab_size=8318, warmup_steps=4000)
+2022-10-02 19:06:39,707 - INFO - Train:lstm-cbow
+2022-10-02 19:06:39,708 - INFO - number of model parameters: 2401918
+2022-10-02 19:06:39,723 - INFO - starting training
+2022-10-02 19:12:00,414 - INFO - epoch 1: loss 6.453421082249725, predict_acc 0.0725625154908962
+2022-10-02 19:12:00,414 - INFO - saving model for epoch 1
+2022-10-02 19:12:00,427 - INFO - epoch 1 finished
+2022-10-02 19:12:00,427 - INFO - time for one epoch: 0:05:20.532368
+2022-10-02 19:12:00,428 - INFO - start validating
+2022-10-02 19:12:02,419 - INFO - validate epoch 1: loss 5.843665938223562
+2022-10-02 19:12:02,420 - INFO - time for validating one epoch: 0:00:01.992216
+2022-10-02 19:17:16,907 - INFO - epoch 2: loss 5.84870364434577, predict_acc 0.09046970020291742
+2022-10-02 19:17:16,907 - INFO - saving model for epoch 2
+2022-10-02 19:17:16,920 - INFO - epoch 2 finished
+2022-10-02 19:17:16,920 - INFO - time for one epoch: 0:05:14.499707
+2022-10-02 19:17:16,920 - INFO - start validating
+2022-10-02 19:17:18,883 - INFO - validate epoch 2: loss 5.838574094157065
+2022-10-02 19:17:18,884 - INFO - time for validating one epoch: 0:00:01.964405
+2022-10-02 19:22:33,000 - INFO - epoch 3: loss 5.44208809797757, predict_acc 0.12496896716832807
+2022-10-02 19:22:33,000 - INFO - saving model for epoch 3
+2022-10-02 19:22:33,013 - INFO - epoch 3 finished
+2022-10-02 19:22:33,013 - INFO - time for one epoch: 0:05:14.128496
+2022-10-02 19:22:33,013 - INFO - start validating
+2022-10-02 19:22:34,982 - INFO - validate epoch 3: loss 4.962828282387026
+2022-10-02 19:22:34,982 - INFO - time for validating one epoch: 0:00:01.969510
+2022-10-02 19:27:47,409 - INFO - epoch 4: loss 4.6906405976747365, predict_acc 0.21690323846069817
+2022-10-02 19:27:47,410 - INFO - saving model for epoch 4
+2022-10-02 19:27:47,422 - INFO - epoch 4 finished
+2022-10-02 19:27:47,422 - INFO - time for one epoch: 0:05:12.438505
+2022-10-02 19:27:47,422 - INFO - start validating
+2022-10-02 19:27:49,385 - INFO - validate epoch 4: loss 4.48249545404988
+2022-10-02 19:27:49,385 - INFO - time for validating one epoch: 0:00:01.962516
+2022-10-02 19:33:01,358 - INFO - epoch 5: loss 4.386369977678571, predict_acc 0.24794426156722263
+2022-10-02 19:33:01,358 - INFO - saving model for epoch 5
+2022-10-02 19:33:01,371 - INFO - epoch 5 finished
+2022-10-02 19:33:01,371 - INFO - time for one epoch: 0:05:11.984780
+2022-10-02 19:33:01,371 - INFO - start validating
+2022-10-02 19:33:03,330 - INFO - validate epoch 5: loss 4.292762764038578
+2022-10-02 19:33:03,330 - INFO - time for validating one epoch: 0:00:01.958049
+2022-10-02 19:38:14,931 - INFO - epoch 6: loss 4.249703043796977, predict_acc 0.2604082926694661
+2022-10-02 19:38:14,931 - INFO - saving model for epoch 6
+2022-10-02 19:38:14,943 - INFO - epoch 6 finished
+2022-10-02 19:38:14,944 - INFO - time for one epoch: 0:05:11.612841
+2022-10-02 19:38:14,944 - INFO - start validating
+2022-10-02 19:38:16,894 - INFO - validate epoch 6: loss 4.199706608249295
+2022-10-02 19:38:16,895 - INFO - time for validating one epoch: 0:00:01.950537
+2022-10-02 19:43:31,102 - INFO - epoch 7: loss 4.1716194426427124, predict_acc 0.2679301983608109
+2022-10-02 19:43:31,102 - INFO - saving model for epoch 7
+2022-10-02 19:43:31,116 - INFO - epoch 7 finished
+2022-10-02 19:43:31,117 - INFO - time for one epoch: 0:05:14.222374
+2022-10-02 19:43:31,117 - INFO - start validating
+2022-10-02 19:43:33,333 - INFO - validate epoch 7: loss 4.140087066158172
+2022-10-02 19:43:33,333 - INFO - time for validating one epoch: 0:00:02.215683

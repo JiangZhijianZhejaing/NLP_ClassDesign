@@ -1,3 +1,5 @@
 *.txt
 !vocab.txt
 scrapy_baidu-master/
+*.pkl
+*.log

@@ -91,7 +91,7 @@ class Vocab:
         self._token_freqs = sorted(counter.items(), key=lambda x: x[1],
                                    reverse=True)
         # 未知词元的索引为0
-        self.idx_to_token = ['<unk>'] + reserved_tokens
+        self.idx_to_token = reserved_tokens
         self.token_to_idx = {token: idx
                              for idx, token in enumerate(self.idx_to_token)}
         for token, freq in self._token_freqs:
@@ -111,8 +111,6 @@ class Vocab:
     #     uniq_tokens+=[token for token,freq in token_freqs.items() if freq>=min_freq and token!="<unk>"]
     #     # cls可以在静态方法中使用，并通过cls()方法来实例化一个对象。
     #     return cls(uniq_tokens)
-
-
     # return cls(vocab)
 
     def __len__(self):
@@ -133,14 +131,14 @@ class Vocab:
         :param tokens:
         :return: 查找一系列语句返回索引值
         '''
-        return [self.token_to_idx[token] if token in self.idx_to_token else 0 for token in tokens]
+        return [self.token_to_idx[token] if token in self.idx_to_token else 5 for token in tokens]
 
     def convert_ids_to_tokens(self,indices):
         '''
         :param tokens:
         :return: 通过索引返回举止
         '''
-        return [self.idx_to_token[index] if index<=26275  else '<unk>' for index in indices ]
+        return [self.idx_to_token[index] if index<=8317  else '<UNK>' for index in indices ]
 
     @property
     def unk(self):  # 未知词元的索引为0

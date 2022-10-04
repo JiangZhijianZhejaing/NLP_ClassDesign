@@ -9,8 +9,6 @@ import torch
 from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import Dataset, DataLoader
-from torch.nn.utils.rnn import pad_sequence
-from torch.nn.utils.rnn import pad_sequence
 from tqdm.auto import tqdm
 from utils import BOS_TOKEN, EOS_TOKEN, PAD_TOKEN, load_crawldata
 from utils import load_reuters, save_pretrained, get_loader, init_weights
@@ -91,28 +89,5 @@ for epoch in range(num_epoch):
         total_loss+=loss.item()
     print(f"Loss:{total_loss:2f}")
     total_losses.append(total_loss)
-save_pretrained(vocab,model.embeddings.weight.data,"cbow_{:.4f}.vec".format(total_losses[-1]),total_losses)
+save_pretrained(vocab,model.embeddings.weight.data,"cbow.vec",total_losses)
 
-
-# nll_loss=nn.NLLLoss()
-# #构造CBOW模型，加载到device
-# device=torch.device("cuda" if torch.cuda.is_available() else 'cpu')
-# model=CbowModel(len(vocab),embedding_dim)
-# model.to(device)
-# optimizer=optim.Adam(model.parameters(),lr=0.001)
-# model.train()
-# for epoch in range(num_epoch):
-#     total_loss=0
-#     for batch in tqdm(data_loader,desc=f'Training Epoch {epoch}'):
-#         inputs,targets=[x.to(device) for x in batch]
-#         optimizer.zero_grad()
-#         #先softmax，然后log函数，最后nll_loss 本质上是交叉熵函数
-#         log_probs=model(inputs)
-#         loss=nll_loss(log_probs,targets)
-#         loss.backward()
-#         optimizer.step()
-#         total_loss+=loss.item()
-#     print(f"Loss:{total_loss:.2f}")
-#
-# # 保存词向量（model.embeddings）
-# save_pretrained(vocab, model.embeddings.weight.input, "cbow.vec")
